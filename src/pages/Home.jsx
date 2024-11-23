@@ -45,29 +45,37 @@ function Home() {
     setSelectedIdol(null);
   };
 
-  // 공통 슬라이더 설정
+  // 반응형 슬라이더 설정 개선
   const commonSliderSettings = {
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 3,
+    slidesToShow: 4, // 기본 4개 표시로 변경
+    slidesToScroll: 4,
     prevArrow: <CustomArrow direction="prev" />,
     nextArrow: <CustomArrow direction="next" />,
     dotsClass: "slick-dots !bottom-[-3rem]",
     responsive: [
       {
-        breakpoint: 1280,
+        breakpoint: 1536, // 2xl
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+        }
+      },
+      {
+        breakpoint: 1280, // xl
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
         }
       },
       {
-        breakpoint: 768,
+        breakpoint: 768, // md
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
+          arrows: false, // 모바일에서 화살표 숨김
         }
       }
     ],
@@ -115,35 +123,62 @@ function Home() {
       <Banner />
 
       {/* 메인 콘텐츠 */}
-      <div className="container mx-auto px-4 py-12">
-        {/* 인기 아이돌 섹션 */}
-        <section className="mb-24">
-          <div className="flex items-center justify-between mb-8">
+      <div className="container mx-auto px-4 lg:px-8 py-8 lg:py-12">
+        {/* 섹션 헤더 반응형 개선 */}
+        <section className="mb-16 lg:mb-24">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center 
+                         justify-between gap-4 mb-8 lg:mb-12">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                 인기 아이돌
               </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-sm lg:text-base text-gray-600 dark:text-gray-400">
                 지금 가장 인기있는 K-POP 아이돌
               </p>
             </div>
             <Link 
               to="/fanpage"
               onClick={handleScrollToTop}
-              className="group flex items-center gap-2 px-6 py-2.5 rounded-full
+              className="w-full sm:w-auto group flex items-center justify-center gap-2 
+                        px-4 lg:px-6 py-2 lg:py-2.5 rounded-full
                         bg-gray-100 hover:bg-gray-200 
                         dark:bg-gray-800 dark:hover:bg-gray-700
                         transition-all duration-300"
             >
-              <span className="text-gray-700 dark:text-gray-300 font-medium">
+              <span className="text-sm lg:text-base text-gray-700 dark:text-gray-300 font-medium">
                 더보기
               </span>
-              <HiArrowLongRight className="w-5 h-5 text-gray-600 dark:text-gray-400 
+              <HiArrowLongRight className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600 dark:text-gray-400 
                                         group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           
-          <CardList limit={12} showMoreButton={false} />
+          {/* 슬라이더 컨테이너 반응형 개선 */}
+          <div className="relative px-0 sm:px-4 lg:px-8">
+            <Slider {...rankingSliderSettings}>
+              {rankingGroups.map(group => (
+                <div key={group.title} className="px-2 sm:px-4">
+                  <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm 
+                                rounded-xl lg:rounded-2xl 
+                                shadow-lg dark:shadow-gray-900/30 
+                                p-4 lg:p-8 
+                                border border-gray-200 dark:border-gray-800
+                                hover:border-purple-200 dark:hover:border-purple-800
+                                transition-all duration-300
+                                h-full">
+                    <h3 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-4 lg:mb-6">
+                      {group.title}
+                    </h3>
+                    <Ranking 
+                      start={group.start} 
+                      end={group.end}
+                      onIdolClick={handleIdolClick}
+                    />
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          </div>
         </section>
 
         {/* 아이돌 랭킹 섹션 */}
